@@ -53,7 +53,7 @@ prompt_git() {
 
 		[ -n "${s}" ] && s=" [${s}]";
 
-		echo -e "${1}${branchName}${blue}${s}";
+		echo -e "${1}⎇  ${branchName}${blue}${s}";
 	else
 		return;
 	fi;
@@ -103,9 +103,17 @@ else
 	hostStyle="${yellow}";
 fi;
 
+prompt_return() {
+	returnValue="$?"
+	if [ "$returnValue" != "0" ]; then
+		echo "${red} ✘ "
+	fi
+}
+
 # Set the terminal title to the current working directory.
 PS1="\[\033]0;\w\007\]";
 PS1+="\[${bold}\]\n"; # newline
+PS1+="\$(prompt_return)"
 PS1+="\[${userStyle}\]\u"; # username
 PS1+="\[${white}\] at ";
 PS1+="\[${hostStyle}\]\h"; # host
