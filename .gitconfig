@@ -164,3 +164,8 @@
 [url "git://gist.github.com/"]
 
 	insteadOf = "gist:"
+
+
+# Allow a local file that won't get overridden
+[include]
+	path = .gitconfig-local
