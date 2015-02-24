@@ -2,5 +2,5 @@ set boldtext
 set smarthome
 set autoindent
 set morespace
-set mouse
+#set mouse
 
