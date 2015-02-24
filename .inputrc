@@ -1,3 +1,6 @@
+# Include the system /etc/inputrc so we don't lose sensible defaults
+$include /etc/inputrc
+
 # Make Tab autocomplete regardless of filename case
 set completion-ignore-case on
 
@@ -11,6 +14,8 @@ set mark-symlinked-directories on
 # commands (i.e. more intelligent Up/Down behavior)
 "\e[B": history-search-forward
 "\e[A": history-search-backward
+"\e[5~": history-search-backward
+"\e[6~": history-search-forward
 
 # Do not autocomplete hidden files unless the pattern explicitly begins with a dot
 set match-hidden-files off
@@ -38,3 +43,5 @@ set convert-meta off
 
 # Use Alt/Meta + Delete to delete the preceding word
 "\e[3;3~": kill-word
+
+
