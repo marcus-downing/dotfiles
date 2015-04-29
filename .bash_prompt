@@ -121,7 +121,7 @@ fi;
 prompt_return() {
 	returnValue="$?"
 	if [ "$returnValue" != "0" ]; then
-		echo "${red}[✘] "
+		echo "${red}✘ error $returnValue${white} for "
 	fi
 }
 
