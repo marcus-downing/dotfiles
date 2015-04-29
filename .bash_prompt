@@ -131,9 +131,9 @@ pwd_owner() {
 	if [ "$owner" != "$self" ]; then
 		group="$(stat -c "%G" .)"
 		if [ "$owner" == "$group" ]; then
-			echo "${white} owned by ${cyan}$(stat -c "%U" .)"
+			echo "${white} owned by ${cyan}$(stat -c "%U" .) ${blue}$(stat -c "%A" .)"
 		else
-			echo "${white} owned by ${cyan}$(stat -c "%U:%G" .)"
+			echo "${white} owned by ${cyan}$(stat -c "%U:%G" .) ${blue}$(stat -c "%A" .)"
 		fi
 	fi
 }
