@@ -3,6 +3,11 @@
 # Heavily inspired by @necolas’s prompt: https://github.com/necolas/dotfiles
 # iTerm → Profiles → Text → use 13pt Monaco with 1.1 vertical spacing.
 
+# Put a custom unicode icon for yourself in ~/.bash_usericon
+# Put a custom machine icon in /etc/opt/bash_icon
+# See http://unicode-table.com/en/sets/chess-symbols/
+# Not all icons work with all fonts!
+
 if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then
 	export TERM='gnome-256color';
 elif infocmp xterm-256color >/dev/null 2>&1; then
@@ -102,21 +107,23 @@ fi;
 
 # Highlight the user name when logged in as root.
 if [[ "${USER}" == "root" ]]; then
-	userStyle="${red}▲ ";
+	userStyle="${red}★ ";
 else
-	if [[ "${SSH_TTY}" ]]; then
-		userStyle="${yellow}"
-	else
-		userStyle="${orange}";
+	userStyle="${orange}"
+	if [ -e "$HOME/.bash_usericon" ]; then
+		userStyle="${userStyle}$(cat "$HOME/.bash_usericon")"
 	fi
 fi;
 
 # Highlight the hostname when connected via SSH.
 if [[ "${SSH_TTY}" ]]; then
-	hostStyle="${orange}";
+	hostStyle="${yellow}➙ ";
 else
 	hostStyle="${yellow}";
 fi;
+if [ -e /etc/opt/bash_icon ]; then
+	hostStyle="${hostStyle}$(cat /etc/opt/bash_icon)"
+fi
 
 prompt_return() {
 	returnValue="$?"
@@ -130,11 +137,14 @@ pwd_owner() {
 	self="$(id -un)"
 	if [ "$owner" != "$self" ]; then
 		group="$(stat -c "%G" .)"
-		if [ "$owner" == "$group" ]; then
-			echo "${white} owned by ${cyan}$(stat -c "%U" .) ${blue}$(stat -c "%A" .)"
-		else
-			echo "${white} owned by ${cyan}$(stat -c "%U:%G" .) ${blue}$(stat -c "%A" .)"
+		ownerIcon=""
+		if [ -e "/home/$owner/.bash_usericon" ]; then
+			ownerIcon="$(cat /home/$owner/.bash_usericon)"
 		fi
+		if [ "$owner" != "$group" ]; then
+			owner="$(stat -c "%U:%G" .)"
+		fi
+		echo "${white} owned by ${cyan}${ownerIcon}${owner} ${blue}$(stat -c "%A" .)"
 	fi
 }
 
