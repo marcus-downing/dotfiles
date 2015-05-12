@@ -4,6 +4,7 @@
 # iTerm → Profiles → Text → use 13pt Monaco with 1.1 vertical spacing.
 
 # Put a custom unicode icon for yourself in ~/.bash_usericon
+# Put a custom prompt icon in ~/.bash_prompticon
 # Put a custom machine icon in /etc/opt/bash_icon
 # See http://unicode-table.com/en/sets/chess-symbols/
 # Not all icons work with all fonts!
@@ -106,12 +107,17 @@ else
 fi;
 
 # Highlight the user name when logged in as root.
+promptIcon="\$"
 if [[ "${USER}" == "root" ]]; then
 	userStyle="${red}★ ";
+	promptIcon="#"
 else
 	userStyle="${orange}"
 	if [ -e "$HOME/.bash_usericon" ]; then
 		userStyle="${userStyle}$(cat "$HOME/.bash_usericon")"
+	fi
+	if [ -e "$HOME/.bash_prompticon" ]; then
+		promptIcon="$(cat "$HOME/.bash_prompticon")"
 	fi
 fi;
 
@@ -124,6 +130,7 @@ fi;
 if [ -e /etc/opt/bash_icon ]; then
 	hostStyle="${hostStyle}$(cat /etc/opt/bash_icon)"
 fi
+
 
 prompt_return() {
 	returnValue="$?"
@@ -161,7 +168,7 @@ PS1+="\$(pwd_owner)"; # directory owner
 PS1+="\$(prompt_git \"${white} on ${violet}\")"; # Git repository details
 PS1+="\[${grey}\] at \$(date +'%-H:%M')" # time
 PS1+="\n";
-PS1+="\[${white}\]\$ \[${reset}\]"; # `$` (and reset color)
+PS1+="\[${white}\]${promptIcon} \[${reset}\]";
 export PS1;
 
 PS2="\[${yellow}\]→ \[${reset}\]";
