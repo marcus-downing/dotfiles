@@ -64,8 +64,12 @@ prompt_git() {
 
 		[ -n "${s}" ] && s=" ${s}";
 
+		# Pick an icon to indicate branch status
 		[ "${branchName}" == "master" ] && gitIcon='➙'
-		[ -z "$(git symbolic-ref --quiet HEAD 2> /dev/null)" ] && gitIcon=' ↱'
+		if [ -z "$(git symbolic-ref --quiet HEAD 2> /dev/null)" ]; then
+			gitIcon='↱'
+			[ -z "${branchName}" ] && branchName="detached"
+		fi;
 
 		remoteOrigin="$()"
 
