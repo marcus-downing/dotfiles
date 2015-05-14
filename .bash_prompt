@@ -149,9 +149,9 @@ pwd_owner() {
 			ownerIcon="$(cat /home/$owner/.bash_usericon)"
 		fi
 		if [ "$owner" != "$group" ]; then
-			owner="$(stat -c "%U:%G" .)"
+			owner="${owner}${blue}:${group}"
 		fi
-		echo "${white} owned by ${cyan}${ownerIcon}${owner} ${blue}$(stat -c "%A" .)"
+		echo "${white} owned by ${cyan}${ownerIcon}${owner}"
 	fi
 }
 
