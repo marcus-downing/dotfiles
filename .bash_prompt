@@ -123,11 +123,10 @@ else
 fi;
 
 # Highlight the hostname when connected via SSH.
-if [[ "${SSH_TTY}" ]]; then
-	hostStyle="${yellow}➙ ";
-else
-	hostStyle="${yellow}";
-fi;
+hostStyle="${yellow}";
+#if [[ "${SSH_TTY}" ]]; then
+#	hostStyle="${hostStyle}➙ ";
+#fi;
 if [ -e /etc/opt/bash_icon ]; then
 	hostStyle="${hostStyle}$(cat /etc/opt/bash_icon)"
 fi
