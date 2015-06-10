@@ -143,6 +143,12 @@ prompt_return() {
 	fi
 }
 
+prompt_screen() {
+	if echo "$TERMCAP" | grep "screen" > /dev/null; then
+		echo " ${white}in a ${purple}screen";
+	fi
+}
+
 pwd_owner() {
 	owner="$(stat -c "%U" .)"
 	self="$(id -un)"
@@ -164,6 +170,7 @@ PS1="\[\033]0;\w\007\]";
 PS1+="\[${bold}\]\n"; # newline
 PS1+="\$(prompt_return)"
 PS1+="\[${userStyle}\]\u"; # username
+PS1+="\$(prompt_screen)"; # screen
 PS1+="\[${white}\] at ";
 PS1+="\[${hostStyle}\]\h"; # host
 PS1+="\[${white}\] in ";
