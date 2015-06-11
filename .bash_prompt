@@ -34,22 +34,22 @@ prompt_git() {
 
 			# Check for uncommitted changes in the index.
 			if ! $(git diff --quiet --ignore-submodules --cached); then
-				s+='+';
+				s+="${green}+";
 			fi;
 
 			# Check for unstaged changes.
 			if ! $(git diff-files --quiet --ignore-submodules --); then
-				s+='!';
+				s+="${green}!";
 			fi;
 
 			# Check for untracked files.
 			if [ -n "$(git ls-files --others --exclude-standard)" ]; then
-				s+='?';
+				s+="${yellow}?";
 			fi;
 
 			# Check for stashed files.
 			if $(git rev-parse --verify refs/stash &>/dev/null); then
-				s+='$';
+				s+="${cyan}\$";
 			fi;
 
 		fi;
@@ -58,17 +58,22 @@ prompt_git() {
 		# If HEAD isn’t a symbolic ref, get the short SHA for the latest commit
 		# Otherwise, just give up.
 		branchName="$(git symbolic-ref --quiet --short HEAD 2> /dev/null || \
-			git symbolic-ref --quiet HEAD 2> /dev/null || \
+			git symbolic-ref --quiet HEAD | sed 's/^refs\/heads\///' 2> /dev/null || \
 			git rev-parse --short HEAD 2> /dev/null || \
 			echo '(unknown)')";
 
-		[ -n "${s}" ] && s=" [${s}]";
+		[ -n "${s}" ] && s=" ${s}";
 
-		[ -z "$(git symbolic-ref --quiet HEAD 2> /dev/null)" ] && gitIcon=' ↱'
+		# Pick an icon to indicate branch status
+		[ "${branchName}" == "master" ] && gitIcon='➙'
+		if [ -z "$(git symbolic-ref --quiet HEAD 2> /dev/null)" ]; then
+			gitIcon='↱'
+			[ -z "${branchName}" ] && branchName="detached"
+		fi;
 
 		remoteOrigin="$()"
 
-		echo -e "${1}${gitIcon} ${branchName}${blue}${s}";
+		echo -e "${1}${gitIcon} ${branchName}${s}";
 	else
 		return;
 	fi;
@@ -122,11 +127,10 @@ else
 fi;
 
 # Highlight the hostname when connected via SSH.
-if [[ "${SSH_TTY}" ]]; then
-	hostStyle="${yellow}➙ ";
-else
-	hostStyle="${yellow}";
-fi;
+hostStyle="${yellow}";
+#if [[ "${SSH_TTY}" ]]; then
+#	hostStyle="${hostStyle}➙ ";
+#fi;
 if [ -e /etc/opt/bash_icon ]; then
 	hostStyle="${hostStyle}$(cat /etc/opt/bash_icon)"
 fi
@@ -136,6 +140,12 @@ prompt_return() {
 	returnValue="$?"
 	if [ "$returnValue" != "0" ]; then
 		echo "${red}✘ error $returnValue${white} for "
+	fi
+}
+
+prompt_screen() {
+	if echo "$TERMCAP" | grep "screen" > /dev/null; then
+		echo " ${white}in a ${purple}screen";
 	fi
 }
 
@@ -149,9 +159,9 @@ pwd_owner() {
 			ownerIcon="$(cat /home/$owner/.bash_usericon)"
 		fi
 		if [ "$owner" != "$group" ]; then
-			owner="$(stat -c "%U:%G" .)"
+			owner="${owner}${blue}:${group}"
 		fi
-		echo "${white} owned by ${cyan}${ownerIcon}${owner} ${blue}$(stat -c "%A" .)"
+		echo "${white} owned by ${cyan}${ownerIcon}${owner}"
 	fi
 }
 
@@ -160,6 +170,7 @@ PS1="\[\033]0;\w\007\]";
 PS1+="\[${bold}\]\n"; # newline
 PS1+="\$(prompt_return)"
 PS1+="\[${userStyle}\]\u"; # username
+PS1+="\$(prompt_screen)"; # screen
 PS1+="\[${white}\] at ";
 PS1+="\[${hostStyle}\]\h"; # host
 PS1+="\[${white}\] in ";
